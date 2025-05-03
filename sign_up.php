@@ -45,6 +45,7 @@ $categories = [
     ['Others', '#AB4459', 0]
 ];
 
+
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $username = filter_input(INPUT_POST, "username", FILTER_SANITIZE_SPECIAL_CHARS);
     $email = filter_input(INPUT_POST, "email", FILTER_SANITIZE_EMAIL);
@@ -54,19 +55,30 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     $hash = password_hash($password, PASSWORD_DEFAULT);
 
-    $stmt = $conn->prepare("INSERT INTO users (username, email, password, balance, theme) VALUES (?, ?, ?, ?, ?)");
-    $stmt->bind_param("sssds", $username, $email, $hash, $balance, $theme);
+    $stmtUsers = $conn->prepare("INSERT INTO users (username, email, password, balance, theme) VALUES (?, ?, ?, ?, ?)");
+    $stmtUsers->bind_param("sssds", $username, $email, $hash, $balance, $theme);
 
-    if ($stmt->execute()) {
+    if ($stmtUsers->execute()) {
         $user_id = $conn->insert_id;
 
-        $stmtCat = $conn->prepare("INSERT INTO Categories (user_id, category_name, category_color, category_amount) VALUES (?, ?, ?, ?)");
+        $stmtCategory = $conn->prepare("INSERT INTO Categories (user_id, category_name, category_color, category_amount) VALUES (?, ?, ?, ?)");
 
         foreach ($categories as $category) {
             $stmtCat->bind_param("issd", $user_id, $category[0], $category[1], $category[2]);
             $stmtCat->execute();
         }
 
+        $category_id = $conn->insert_id;
+
+        $transactions_amount = 0;
+        $transactions_date = date('Y-m-d');
+        $transactions_description = "Grocery shopping at the mall (example)";
+
+        $stmtTransactions = $conn->prepare("INSERT INTO Transactions (category_id, transactions_amount, transactions_date, transactions_description) VALUES (?, ?, ?, ?)");
+        $stmtTransactions->bind_param("issd", $category_id, $transactions_amount, $transactions_date, $transactions_description);
+        $stmtTransactions->execute();
+
+        $stmtTransactions->close();
         $stmtCat->close();
         $stmt->close();
         $conn->close();
