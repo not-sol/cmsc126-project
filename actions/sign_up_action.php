@@ -46,7 +46,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 if ($category[0] === 'Food') {
                     $category_id = $conn->insert_id;
 
-                    $stmtTransactions = $conn->prepare("INSERT INTO Transactions (category_id, transactions_amount, transactions_date, transactions_description) VALUES (?, ?, ?, ?)");
+                    $stmtTransactions = $conn->prepare("INSERT INTO Transactions (category_id, transaction_amount, transaction_date, transaction_description) VALUES (?, ?, ?, ?)");
                     $stmtTransactions->bind_param("idss", $category_id, $transactions_amount, $transactions_date, $transactions_description);
                     $stmtTransactions->execute();
                     $stmtTransactions->close();
