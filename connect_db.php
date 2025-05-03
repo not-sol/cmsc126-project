@@ -2,7 +2,7 @@
     $servername = "localhost";
     $username = "root";
     $password = "";
-    $dbname = "UP_Tracker";
+    $dbname = "up_tracker";
 
     $conn = new mysqli($servername, $username, $password, $dbname);
 

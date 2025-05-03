@@ -6,6 +6,7 @@
     <title>UP Tracker</title>
 </head>
 <body>
-    
+    <div>Welcome page</div>
+    <a href="login.php">Login</a>
 </body>
 </html>
