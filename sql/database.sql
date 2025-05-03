@@ -1,8 +1,7 @@
-
 CREATE TABLE Users (
     user_id INT PRIMARY KEY AUTO_INCREMENT,
     username VARCHAR(255),
-    email VARCHAR(255),
+    email VARCHAR(255) UNIQUE,
     password VARCHAR(255),
     reg_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     balance FLOAT DEFAULT 0,
