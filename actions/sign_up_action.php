@@ -1,6 +1,7 @@
 <?php
 // examples
 $categories = [
+    ['Income', '#355F2E', 0],
     ['Food', '#640D5F', 0],
     ['Transportation', '#D91656', 0],
     ['Clothes', '#EB5B00', 0],

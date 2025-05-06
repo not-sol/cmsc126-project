@@ -14,14 +14,14 @@
         <h3>Sign In</h3>
         <form novalidate action="<?php htmlspecialchars("PHP_SELF")?>" method="post">
             <div class="form-floating my-3">
-                <input type="email" class="form-control" id="email" placeholder="Enter email" name="email" required>
-                <label for="email" class="form-label">Email</label>
-                <div class="invalid-feedback">Please fill out this field.</div>
+                <input type="email" class="form-control" id="password-input" placeholder="Email" name="email" required>
+                <label for="password-input" class="form-label">Email</label>
+                <div class="invalid-feedback" id="email-feedback">Please fill out this field.</div>
             </div>
             <div class="form-floating my-3">
-                <input type="password" class="form-control" id="pwd" placeholder="Enter password" name="password" required>
-                <label for="pwd" class="form-label">Password</label>
-                <div class="invalid-feedback">Please fill out this field.</div>
+                <input type="password" class="form-control" id="password-input" placeholder="Enter password" name="password" required>
+                <label for="password-input" class="form-label">Password</label>
+                <div class="invalid-feedback" id="password-feedback ">Please fill out this field.</div>
             </div>
             <button type="submit" class="btn btn-dark">Submit</button>
         </form>

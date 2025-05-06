@@ -1,7 +1,21 @@
 <?php
     session_start();
-
+    
     if ($_SERVER["REQUEST_METHOD"] == "POST") {
+        echo "
+            <script>
+                const form = document.querySelector('form');
+                const emailInput = document.getElementById('email-input');
+                const passwordInput = document.getElementById('password-input');
+                const emailFeedback = document.getElementById('email-feedback');
+                const passwordFeedback = document.getElementById('password-feedback');
+                
+                emailFeedback.innerHTML = 'Please fill out this field.';
+                passwordFeedback.innerHTML = 'Please fill out this field.';
+                emailInput.classList.remove('is-invalid');
+                passwordInput.classList.remove('is-invalid');
+                form.classList.add('was-validated');
+            </script>";
 
         $email = filter_input(INPUT_POST, "email", FILTER_SANITIZE_EMAIL);
         $password = $_POST['password'];
@@ -23,10 +37,30 @@
                 header("Location: dashboard.php");
                 exit();
             } else {
-                echo "Incorrect password.";
+                echo "Wrong pass";
+                echo "
+                    <script>
+                        const passwordInput = document.getElementById('password-input');
+                        const passwordFeedback = document.getElementById('password-feedback');
+                        const form = document.querySelector('form');
+
+                        form.classList.remove('was-validated');
+                        passwordFeedback.innerHTML = 'Incorrect password';
+                        passwordInput.classList.add('is-invalid');
+                    </script>";
             }
         } else {
-            echo "Account not found.";
+            echo "No account";
+            echo "
+                <script>
+                    const emailInput = document.getElementById('email-input');
+                    const emailFeedback = document.getElementById('email-feedback');
+                    const form = document.querySelector('form');
+
+                    form.classList.remove('was-validated');
+                    emailFeedback.innerHTML = 'Account not found';
+                    emailInput.classList.add('is-invalid');
+                </script>";
         }
     }
 ?>
