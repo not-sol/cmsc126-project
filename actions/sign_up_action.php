@@ -1,11 +1,11 @@
 <?php
 // examples
 $categories = [
-    ['Income', '#355F2E', 0],
-    ['Food', '#640D5F', 0],
-    ['Transportation', '#D91656', 0],
-    ['Clothes', '#EB5B00', 0],
-    ['Others', '#AB4459', 0]
+    ['Income', '#A6D6D6', 0],
+    ['Food', '#8E7DBE', 0],
+    ['Transportation', '#F2E2B1', 0],
+    ['Clothes', '#F7CFD8', 0],
+    ['Others', '#F1BA88', 0]
 ];
 
 $transactions_amount = 0;

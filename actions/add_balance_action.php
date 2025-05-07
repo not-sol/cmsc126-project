@@ -21,6 +21,7 @@
         $stmt3->bind_param("i", $user_id);
         $stmt3->execute();
         $result = $stmt3->get_result();
+
         if ($row = $result->fetch_assoc()) {
             $category_id = $row['category_id'];
 
@@ -30,8 +31,6 @@
             $stmt4->close();
         }
         $stmt3->close();
-
-        $_SESSION['balance'] += $amount;
 
         header("Location: ../dashboard.php");
         exit();
