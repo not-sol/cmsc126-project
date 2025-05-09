@@ -34,7 +34,17 @@ $stmt2->execute();
 $result2 = $stmt2->get_result();
 
 $categories = [];
+$labels = [];
+$data = [];
+$colors = [];
+
 while ($row = $result2->fetch_assoc()) {
     $categories[] = $row;
+    if (strtolower($row['category_name']) === 'income') {
+        continue;
+    }
+    $labels[] = $row['category_name'];
+    $data[] = $row['category_amount'];
+    $colors[] = $row['category_color'];
 }
 ?>

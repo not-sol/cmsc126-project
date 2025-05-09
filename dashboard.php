@@ -9,8 +9,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard</title>
+
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-SgOJa3DmI69IUzQ2PVdRZhwQ+dy64/BUtbMJw1MZ8t5HZApcHrRKUc4W0kG879m7" crossorigin="anonymous">
     <link href="assets/css/styles.css" rel="stylesheet">
+    
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
 <h1>Hello, <?php echo $_SESSION['username'];?></h1>
@@ -61,7 +64,61 @@
     </div>
     
     <button type="button" class="btn btn-dark btn-sm" data-bs-toggle="modal" data-bs-target="#make-expense-modal">+</button>
+
+    <div class="container">
+        <div class="row">
+            <div class="col">
+                <canvas id="myChart" width="400" height="200"></canvas>
+            </div>
+            <div class="col"></div>
+        </div>
+    </div>
+
+    
 </div>
+
+<script>
+    const ctx = document.getElementById('myChart').getContext('2d');
+
+    const myChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: <?php echo json_encode($labels); ?>,
+            datasets: [{
+                label: 'Expenses',
+                data: <?php echo json_encode($data); ?>,
+                backgroundColor: <?php echo json_encode($colors); ?>,
+                borderRadius: 5,
+                maxBarThickness: 50
+            }]
+
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    display: false
+                }
+            },
+            scales: {
+                x: {
+                    grid: {
+                        display: false
+                    },
+                },
+                y: {
+                    ticks: {
+                        precision: 0,
+                        stepSize: 200
+                    }
+                }
+            }
+        }
+    });
+</script>
+
+
+
 
 <div class="modal fade" id="add-balance-modal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
@@ -83,7 +140,7 @@
                         <div class="invalid-feedback">Please fill out this field.</div>
                     </div>
                     <div class="form-floating my-3">
-                        <textarea class="form-control" name="description" style="resize: none; height:125px" placeholder="Description" maxlength="200" required></textarea>
+                        <textarea class="form-control" name="description" style="resize: none; height:120px " placeholder="Description" maxlength="100" required></textarea>
                         <label class="form-label">Description</label>
                         <div class="invalid-feedback">Please fill out this field.</div>
                     </div>
@@ -116,7 +173,7 @@
                         <div class="invalid-feedback">Please fill out this field.</div>
                     </div>
                     <div class="form-floating my-3">
-                        <textarea class="form-control" id="make-expense-description" name="description" style="resize: none; height:125px" placeholder="Description" maxlength="200" required></textarea>
+                        <textarea class="form-control" id="make-expense-description" name="description" style="resize: none; height:120px" placeholder="Description" maxlength="100" required></textarea>
                         <label class="form-label">Description</label>
                         <div class="invalid-feedback">Please fill out this field.</div>
                     </div>
@@ -148,6 +205,5 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/js/bootstrap.bundle.min.js"></script>
 <script src="assets/js/number-input.js"></script>
 <script src="assets/js/validate-form.js"></script>
-
 </body>
 </html>

@@ -1,6 +1,8 @@
 function isNumber(event) {
-    const char = String.fromCharCode(event.keyCode);
-    if (!/^\d$/.test(char) && event.keyCode !== 8) {
-      event.preventDefault();
+    const key = event.key;
+    const allowedKeys = ['Backspace', 'ArrowLeft', 'ArrowRight', 'Delete', '.'];
+
+    if (!/^\d$/.test(key) && !allowedKeys.includes(key)) {
+        event.preventDefault();
     }
 }
