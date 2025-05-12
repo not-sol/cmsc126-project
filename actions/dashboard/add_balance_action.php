@@ -1,5 +1,5 @@
 <?php
-    include "../includes/connect_db.php";
+    include "../../includes/connect_db.php";
     session_start();
     if ($_SERVER["REQUEST_METHOD"] === "POST") {
         $user_id = $_SESSION['user_id'];
@@ -32,7 +32,7 @@
         }
         $stmt3->close();
 
-        header("Location: ../dashboard.php");
+        header("Location: ../../dashboard.php");
         exit();
     }
 ?>

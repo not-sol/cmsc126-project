@@ -36,5 +36,5 @@
 </body>
 </html>
 <?php
-    include "actions/sign_up_action.php"
+    include "actions/account/sign_up_action.php"
 ?>

@@ -37,14 +37,25 @@ $categories = [];
 $labels = [];
 $data = [];
 $colors = [];
+$income_total = 0;
+$expense_total = 0;
 
 while ($row = $result2->fetch_assoc()) {
+
+    if (strtolower($row['category_name']) === 'income') {
+        $income_total += (float)$row['category_amount'];
+    } else {
+        $expense_total += (float)$row['category_amount'];
+    }
+    
     $categories[] = $row;
     if (strtolower($row['category_name']) === 'income') {
         continue;
     }
     $labels[] = $row['category_name'];
-    $data[] = $row['category_amount'];
+    $data[] = (float)$row['category_amount'];
     $colors[] = $row['category_color'];
 }
+
 ?>
+

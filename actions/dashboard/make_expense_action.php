@@ -1,5 +1,5 @@
 <?php
-include "../includes/connect_db.php";
+include "../../includes/connect_db.php";
 session_start();
 
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
@@ -25,7 +25,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $stmt3->execute();
     $stmt3->close();
 
-    header("Location: ../dashboard.php");
+    header("Location: ../../dashboard.php");
     exit;
 }
 ?>
