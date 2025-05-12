@@ -6,13 +6,6 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $userId = $_SESSION['user_id'];
     $currentPassword = $_POST['current_password'];
     $newPassword = $_POST['new_password'];
-    $confirmPassword = $_POST['confirm_password'];
-
-    if ($newPassword !== $confirmPassword) {
-        $_SESSION['error'] = "New passwords do not match.";
-        header("Location: ../../profile.php");
-        exit();
-    }
 
     $stmt = $conn->prepare("SELECT password FROM users WHERE user_id = ?");
     $stmt->bind_param("i", $userId);
@@ -22,7 +15,10 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $stmt->close();
 
     if (!password_verify($currentPassword, $hashedPasswordFromDb)) {
-        $_SESSION['error'] = "Current password is incorrect.";
+        $_SESSION['alert'] = [
+            'type' => 'danger',
+            'message' => 'Incorrect current password!'
+        ];
         header("Location: ../../profile.php");
         exit();
     }
@@ -33,7 +29,10 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $stmt->execute();
     $stmt->close();
 
-    $_SESSION['success'] = "Password changed successfully.";
+    $_SESSION['alert'] = [
+        'type' => 'success',
+        'message' => 'Password changed successfully!'
+    ];
 }
 
 header("Location: ../../profile.php");

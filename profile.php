@@ -2,6 +2,12 @@
     session_start();
     include "includes/connect_db.php";
     include "actions/dashboard/get_data_action.php";
+
+    if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['toggle_darkmode'])) {
+    $_SESSION['darkmode'] = ($_SESSION['darkmode'] === 'yes') ? 'no' : 'yes';
+    header("Location: " . $_SERVER['REQUEST_URI']);
+    exit();
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -11,7 +17,7 @@
     <title>Document</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-SgOJa3DmI69IUzQ2PVdRZhwQ+dy64/BUtbMJw1MZ8t5HZApcHrRKUc4W0kG879m7" crossorigin="anonymous">
 </head>
-<body>
+<body class="<?= ($_SESSION['darkmode'] ?? 'no') === 'yes' ? 'bg-dark text-light' : '' ?>">
 
 <div class="container">
     <h1>Hello, <?php echo $_SESSION['username'];?></h1>
@@ -21,11 +27,23 @@
     <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#change-password-modal">
         Change Password
     </button>
+    <?php if (isset($_SESSION['alert'])): ?>
+    <div class="alert alert-<?= $_SESSION['alert']['type'] ?> alert-dismissible fade show" role="alert">
+        <?= htmlspecialchars($_SESSION['alert']['message']) ?>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    <?php unset($_SESSION['alert']); ?>
+    <?php endif; ?>
 
+    <form method="post" id="darkmode-form">
+    <input type="hidden" name="toggle_darkmode" value="1">
     <div class="form-check form-switch">
-        <input class="form-check-input" type="checkbox" id="mySwitch" name="darkmode" value="yes" checked>
+        <input class="form-check-input" type="checkbox" id="mySwitch" name="darkmode"
+            onchange="document.getElementById('darkmode-form').submit();"
+            <?= (isset($_SESSION['darkmode']) && $_SESSION['darkmode'] === 'yes') ? 'checked' : '' ?>>
         <label class="form-check-label" for="mySwitch">Dark Mode</label>
     </div>
+</form>
 </div>
 
 <div class="modal fade" id="change-username-modal" tabindex="-1" aria-hidden="true">
@@ -69,11 +87,6 @@
                     <div class="form-floating mb-3">
                         <input type="password" class="form-control" id="new-password" name="new_password" placeholder="password" required minlength="8">
                         <label for="new-password" class="form-label">New Password</label>
-                        <div class="invalid-feedback" id="password-feedback ">Please fill out this field.</div>
-                    </div>
-                    <div class="form-floating mb-3">
-                        <input type="password" class="form-control" id="confirm-password" name="confirm_password" placeholder="password" required minlength="8">
-                        <label for="confirm-password" class="form-label">Confirm New Password</label>
                         <div class="invalid-feedback" id="password-feedback ">Please fill out this field.</div>
                     </div>
                 </div>

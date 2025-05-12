@@ -43,8 +43,8 @@
                 <?php while ($row = $transactionData->fetch_assoc()): ?>
                 <tr>
                     <td><?= htmlspecialchars($row['category_name']) ?></td>
-                    <td><?= htmlspecialchars($row['transaction_amount']) ?></td>
-                    <td><?= htmlspecialchars($row['transaction_date']) ?></td>
+                    <td>₱<?= number_format($row['transaction_amount'], 2) ?></td>
+                    <td><?= htmlspecialchars(date("F d, Y", strtotime($row['transaction_date']))) ?></td>
                     <td class="text-wrap" style="max-width: 300px; white-space: normal;">
                         <?= htmlspecialchars($row['transaction_description']) ?>
                     </td>
@@ -65,8 +65,8 @@
             <?php foreach ($categories as $row): ?>
                 <div class="col-2">
                     <div class="p-2 rounded text-center" style="border: 3px solid <?= htmlspecialchars($row['category_color']) ?>; color: <?= htmlspecialchars($row['category_color']) ?>;">
-                        <p><?= htmlspecialchars($row['category_name']) ?></p>
-                        <p class="">₱<?= htmlspecialchars(number_format($row['category_amount'], 2)) ?></p>
+                        <p class="m-0"><?= htmlspecialchars($row['category_name']) ?></p>
+                        <p class="m-0">₱<?= htmlspecialchars(number_format($row['category_amount'], 2)) ?></p>
                     </div>
                 </div>
             <?php endforeach; ?>
