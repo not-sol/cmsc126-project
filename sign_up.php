@@ -24,7 +24,7 @@
                 <div class="invalid-feedback">Please fill out this field.</div>
             </div>
             <div class="form-floating my-3">
-                <input type="password" class="form-control" id="pwd" placeholder="Enter password" name="password" required>
+                <input type="password" class="form-control" id="pwd" placeholder="Enter password" name="password" minlength="8" required>
                 <label for="pwd" class="form-label">Password</label>
                 <div class="invalid-feedback">Please fill out this field.</div>
             </div>

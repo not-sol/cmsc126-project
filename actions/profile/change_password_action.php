@@ -10,11 +10,11 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $stmt = $conn->prepare("SELECT password FROM users WHERE user_id = ?");
     $stmt->bind_param("i", $userId);
     $stmt->execute();
-    $stmt->bind_result($hashedPasswordFromDb);
+    $stmt->bind_result($hashedPassword);
     $stmt->fetch();
     $stmt->close();
 
-    if (!password_verify($currentPassword, $hashedPasswordFromDb)) {
+    if (!password_verify($currentPassword, $hashedPassword)) {
         $_SESSION['alert'] = [
             'type' => 'danger',
             'message' => 'Incorrect current password!'

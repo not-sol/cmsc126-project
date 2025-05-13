@@ -4,7 +4,7 @@
     include "actions/dashboard/get_data_action.php";
 ?>
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-bs-theme="<?= ($_SESSION['theme'] === 'dark') ? 'dark' : 'light' ?>">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -17,7 +17,9 @@
 </head>
 <body>
 <h1>Hello, <?php echo $_SESSION['username'];?></h1>
+<a href="index.php">Home</a>
 <a href="profile.php">Profile</a>
+<a href="settings.php">Settings</a>
 <div class="container p-3" style="max-width: 1000px;">
     <div class="container">
         <div class="row gx-3">
@@ -25,7 +27,7 @@
                 <h3>Balance: ₱<?php echo number_format($_SESSION['balance'], 2); ?></h3>
             </div>
             <div class="col-auto">
-                <button type="button" class="btn btn-dark btn-sm" data-bs-toggle="modal" data-bs-target="#add-balance-modal">+</button>
+                <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#add-balance-modal">+</button>
             </div>
         </div>
     </div>
@@ -73,7 +75,7 @@
         </div>
     </div>
     
-    <button type="button" class="btn btn-dark btn-sm" data-bs-toggle="modal" data-bs-target="#make-expense-modal">+</button>
+    <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#make-expense-modal">+</button>
 
     <div class="container">
         <div class="row align-items-center">
@@ -87,21 +89,20 @@
             </div>
         </div>
     </div>
-
-    
 </div>
 
 <script>
+    const isDarkMode = <?= ($_SESSION['theme'] === 'dark') ? 'true' : 'false' ?>;
     const barCtx = document.getElementById('barGraph').getContext('2d');
 
     const barGraph = new Chart(barCtx, {
         type: 'bar',
         data: {
-            labels: <?php echo json_encode($labels); ?>,
+            labels: <?= json_encode($labels); ?>,
             datasets: [{
                 label: 'Expenses',
-                data: <?php echo json_encode($data); ?>,
-                backgroundColor: <?php echo json_encode($colors); ?>,
+                data: <?= json_encode($data); ?>,
+                backgroundColor: <?= json_encode($colors); ?>,
                 borderRadius: 5,
                 maxBarThickness: 50
             }]
@@ -123,17 +124,24 @@
             },
             scales: {
                 x: {
+                    ticks: {
+                        color: isDarkMode ? '#fff' : '#000'
+                    },
                     grid: {
                         display: false
-                    },
+                    }
                 },
                 y: {
                     ticks: {
+                        color: isDarkMode ? '#fff' : '#000',
                         precision: 0,
                         stepSize: 200,
                         callback: function(value) {
                             return `₱${value.toLocaleString()}`;
                         }
+                    },
+                    grid: {
+                        color: isDarkMode ? '#fff' : '#ccc'
                     }
                 }
             }
@@ -149,10 +157,10 @@
         data: {
             labels: ['Expenses','Income'],
             datasets: [{
-                data: [<?php echo json_encode($expense_total); ?>, <?php echo json_encode($income_total); ?>],
+                data: [<?= json_encode($expense_total); ?>, <?= json_encode($income_total); ?>],
                 backgroundColor: ['#F1BA88', '#A6D6D6'],
                 borderWidth: 7,
-                borderColor: '#ffffff',
+                borderColor: isDarkMode ? '#212529' : '#fff',
                 borderRadius: 10
             }]
         },
@@ -165,7 +173,7 @@
                     display: true,
                     position: 'bottom',
                     labels: {
-                        color: '#444',
+                        color: isDarkMode ? '#fff' : '#444',
                         font: {
                             size: 14,
                             family: 'sans-serif'
@@ -186,6 +194,7 @@
     });
 </script>
 
+
 <div class="modal fade" id="add-balance-modal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
@@ -196,7 +205,7 @@
                 </div>
                 <div class="modal-body">
                     <div class="form-floating my-3">
-                        <input type="text" class="form-control" placeholder="Amount" name="amount" onkeydown="return isNumber(event)" required>
+                        <input type="text" class="form-control" placeholder="Amount" name="amount" onkeydown="return isNumber(event)" maxlength="10" required>
                         <label class="form-label">Amount</label>
                         <div class="invalid-feedback">Please fill out this field.</div>
                     </div>
@@ -212,7 +221,7 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="submit" class="btn btn-dark">Add</button>
+                    <button type="submit" class="btn btn-primary">Add</button>
                 </div>
             </form>
         </div>
@@ -229,7 +238,7 @@
                 </div>
                 <div class="modal-body">
                     <div class="form-floating my-3">
-                        <input type="text" class="form-control" id="make-expense-amount" placeholder="Amount" name="amount" onkeydown="return isNumber(event)" required>
+                        <input type="text" class="form-control" id="make-expense-amount" placeholder="Amount" name="amount" onkeydown="return isNumber(event)" maxlength="10" required>
                         <label class="form-label">Amount</label>
                         <div class="invalid-feedback">Please fill out this field.</div>
                     </div>
@@ -248,7 +257,7 @@
                             <?php if (strtolower($row['category_name']) === 'income') continue; ?>
                             <div class="col-4">
                                 <label class="w-100">
-                                    <input type="radio" name="category_id" value="<?= $row['category_id'] ?>" hidden>
+                                    <input type="radio" name="category_id" value="<?= $row['category_id'] ?>" <?= strtolower($row['category_name']) === 'food' ? 'checked' : '' ?> hidden>
                                     <div class="category-option py-3 rounded text-center"
                                         style="background-color: <?= htmlspecialchars($row['category_color']) ?>;">
                                         <p><?= htmlspecialchars($row['category_name']) ?></p>
@@ -259,7 +268,7 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="submit" class="btn btn-dark">Add</button>
+                    <button type="submit" class="btn btn-primary">Add</button>
                 </div>
             </form>
         </div>
