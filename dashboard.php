@@ -56,7 +56,6 @@
                             <button type="submit" class="btn btn-danger btn-sm">Delete</button>
                         </form>
                     </td>
-
                 </tr>
                 <?php endwhile; ?>
             </tbody>
@@ -260,7 +259,7 @@
                                     <input type="radio" name="category_id" value="<?= $row['category_id'] ?>" <?= strtolower($row['category_name']) === 'food' ? 'checked' : '' ?> hidden>
                                     <div class="category-option py-3 rounded text-center"
                                         style="background-color: <?= htmlspecialchars($row['category_color']) ?>;">
-                                        <p><?= htmlspecialchars($row['category_name']) ?></p>
+                                        <p class="m-0"><?= htmlspecialchars($row['category_name']) ?></p>
                                     </div>
                                 </label>
                             </div>
