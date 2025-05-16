@@ -5,7 +5,8 @@ CREATE TABLE Users (
     password VARCHAR(255),
     reg_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     balance FLOAT DEFAULT 0,
-    theme VARCHAR(255)
+    theme VARCHAR(255),
+    max_rows INT DEFAULT 10
 );
 
 CREATE TABLE Categories (

@@ -1,11 +1,14 @@
 <?php
+session_start();
+include '../../includes/connect_db.php';
+
 // examples
 $categories = [
-    ['Income', '#A6D6D6', 0],
-    ['Food', '#8E7DBE', 0],
-    ['Transportation', '#F2E2B1', 0],
-    ['Clothes', '#F7CFD8', 0],
-    ['Others', '#F1BA88', 0]
+    ['Income', '#1F7D53', 0],
+    ['Food', '#F0A04B', 0],
+    ['Transportation', '#D50B8B', 0],
+    ['School', '#F1BA88', 0],
+    ['Others', '#8E1616', 0]
 ];
 
 $transactions_amount = 0;
@@ -27,42 +30,44 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $checkEmail->store_result();
 
     if ($checkEmail->num_rows > 0) {
-        echo "Email is already in use. Please try another.";
+        $_SESSION['alert'] = [
+            'type' => 'danger',
+            'message' => 'Email is already registered!'
+        ];
+        header("Location: ../../sign_up.php");
         $checkEmail->close();
+        exit();
     } else {
         $checkEmail->close();
 
         $stmtUsers = $conn->prepare("INSERT INTO users (username, email, password, balance, theme) VALUES (?, ?, ?, ?, ?)");
         $stmtUsers->bind_param("sssds", $username, $email, $hash, $balance, $theme);
 
-        if ($stmtUsers->execute()) {
-            $user_id = $conn->insert_id;
+        $stmtUsers->execute();
+        $user_id = $conn->insert_id;
 
-            $stmtCategory = $conn->prepare("INSERT INTO Categories (user_id, category_name, category_color, category_amount) VALUES (?, ?, ?, ?)");
+        $stmtCategory = $conn->prepare("INSERT INTO Categories (user_id, category_name, category_color, category_amount) VALUES (?, ?, ?, ?)");
 
-            foreach ($categories as $category) {
-                $stmtCategory->bind_param("issd", $user_id, $category[0], $category[1], $category[2]);
-                $stmtCategory->execute();
+        foreach ($categories as $category) {
+            $stmtCategory->bind_param("issd", $user_id, $category[0], $category[1], $category[2]);
+            $stmtCategory->execute();
 
-                if ($category[0] === 'Food') {
-                    $category_id = $conn->insert_id;
+            if ($category[0] === 'Food') {
+                $category_id = $conn->insert_id;
 
-                    $stmtTransactions = $conn->prepare("INSERT INTO Transactions (category_id, transaction_amount, transaction_date, transaction_description) VALUES (?, ?, ?, ?)");
-                    $stmtTransactions->bind_param("idss", $category_id, $transactions_amount, $transactions_date, $transactions_description);
-                    $stmtTransactions->execute();
-                    $stmtTransactions->close();
-                }
+                $stmtTransactions = $conn->prepare("INSERT INTO Transactions (category_id, transaction_amount, transaction_date, transaction_description) VALUES (?, ?, ?, ?)");
+                $stmtTransactions->bind_param("idss", $category_id, $transactions_amount, $transactions_date, $transactions_description);
+                $stmtTransactions->execute();
+                $stmtTransactions->close();
             }
-
-            $stmtCategory->close();
-            $stmtUsers->close();
-            $conn->close();
-
-            header("Location: login.php");
-            exit();
-        } else {
-            echo "Something went wrong while creating your account.";
         }
+
+        $stmtCategory->close();
+        $stmtUsers->close();
+        $conn->close();
+
+        header("Location: ../../login.php");
+        exit();
     }
 }
 ?>

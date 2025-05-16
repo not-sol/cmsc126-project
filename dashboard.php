@@ -1,6 +1,10 @@
 <?php
     session_start();
     include "includes/connect_db.php";
+    if (isset($_GET['sort'])) {
+        $_SESSION['sort'] = $_GET['sort'];
+    }
+
     include "actions/dashboard/get_data_action.php";
 ?>
 <!DOCTYPE html>
@@ -16,18 +20,71 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
-<h1>Hello, <?php echo $_SESSION['username'];?></h1>
-<a href="index.php">Home</a>
-<a href="profile.php">Profile</a>
-<a href="settings.php">Settings</a>
-<div class="container p-3" style="max-width: 1000px;">
+<nav class="navbar navbar-expand border-bottom rounded-bottom bg-body-tertiary fixed-top">
+    <div class="container-fluid">
+        <ul class="navbar-nav">
+            <li class="nav-item">
+                <a class="nav-link" href="index.php">Home</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#">Dashboard</a>
+            </li>
+        </ul>
+        <ul class="navbar-nav ms-auto">
+            <li class="nav-item">
+                <a class="nav-link text-primary" href="profile.php"><?php echo $_SESSION['username'];?></a>
+            </li>
+        </ul>
+    </div>
+</nav>
+
+<div class="container border rounded py-5 px-1 px-md-5" style="max-width: 60rem; margin-top: 5rem; margin-bottom: 5rem">
+
     <div class="container">
         <div class="row gx-3">
             <div class="col-auto">
-                <h3>Balance: ₱<?php echo number_format($_SESSION['balance'], 2); ?></h3>
+                <h3><strong>Balance ₱<?php echo number_format($_SESSION['balance'], 2); ?></strong></h3>
             </div>
             <div class="col-auto">
-                <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#add-balance-modal">+</button>
+                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#add-balance-modal">+</button>
+            </div>
+        </div>
+    </div>
+    
+    <div class="container my-3">
+        <h5 class="m-2">Categories</h5>
+        <div class="row g-3">
+            <?php foreach ($categories as $row): ?>
+                <div class="col-md-3 col-6">
+                    <div class="p-2 rounded text-center" style="border: 3px solid <?= htmlspecialchars($row['category_color']) ?>; color: <?= htmlspecialchars($row['category_color']) ?>;">
+                        <p class="m-0"><?= htmlspecialchars($row['category_name']) ?></p>
+                        <p class="m-0">₱<?= htmlspecialchars(number_format($row['category_amount'], 2)) ?></p>
+                    </div>
+                </div>
+            <?php endforeach; ?>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="row gx-3">
+            <div class="col-auto">
+                <button type="button" class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown">
+                    Sort By
+                </button>
+                <ul class="dropdown-menu">
+                        <li><a class="dropdown-item <?= ($_SESSION['sort'] ?? 'date_asc') == 'date_create_desc' ? 'active' : '' ?>" href="?sort=date_create_desc">Date create ↓</a></li>
+                        <li><a class="dropdown-item <?= ($_SESSION['sort'] ?? 'date_asc') == 'date_create_asc' ? 'active' : '' ?>" href="?sort=date_create_asc">Date create ↑</a></li>
+                        <li><a class="dropdown-item <?= ($_SESSION['sort'] ?? 'date_asc') == 'date_desc' ? 'active' : '' ?>" href="?sort=date_desc">Date ↓</a></li>
+                        <li><a class="dropdown-item <?= ($_SESSION['sort'] ?? 'date_asc') == 'date_asc' ? 'active' : '' ?>" href="?sort=date_asc">Date ↑</a></li>
+                        <li><a class="dropdown-item <?= ($_SESSION['sort'] ?? 'date_asc') == 'amount_desc' ? 'active' : '' ?>" href="?sort=amount_desc">Amount ↓</a></li>
+                        <li><a class="dropdown-item <?= ($_SESSION['sort'] ?? 'date_asc') == 'amount_asc' ? 'active' : '' ?>" href="?sort=amount_asc">Amount ↑</a></li>
+                </ul>
+            </div>
+            <div class="col-auto ms-auto">
+                <button class="btn btn-primary mb-2" onclick="toggleEdit()">Edit</button>
+            </div>
+            <div class="col-auto">
+                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#make-expense-modal">+</button>
             </div>
         </div>
     </div>
@@ -39,6 +96,7 @@
                     <th>Amount</th>
                     <th>Date</th>
                     <th>Description</th>
+                    <th class="edit-column d-none" style="width: 1%; white-space: nowrap;"></th>
                 </tr>
             </thead>
             <tbody>
@@ -50,7 +108,7 @@
                     <td class="text-wrap" style="max-width: 300px; white-space: normal;">
                         <?= htmlspecialchars($row['transaction_description']) ?>
                     </td>
-                    <td>
+                    <td class="edit-column d-none" style="width: 1%; white-space: nowrap;">
                         <form action="actions/dashboard/delete_transaction_action.php" method="post">
                             <input type="hidden" name="transaction_id" value="<?= $row['transaction_id'] ?>">
                             <button type="submit" class="btn btn-danger btn-sm">Delete</button>
@@ -60,25 +118,28 @@
                 <?php endwhile; ?>
             </tbody>
         </table>
-    </div>
-    <div class="container">
-        <div class="row g-3">
-            <?php foreach ($categories as $row): ?>
-                <div class="col-2">
-                    <div class="p-2 rounded text-center" style="border: 3px solid <?= htmlspecialchars($row['category_color']) ?>; color: <?= htmlspecialchars($row['category_color']) ?>;">
-                        <p class="m-0"><?= htmlspecialchars($row['category_name']) ?></p>
-                        <p class="m-0">₱<?= htmlspecialchars(number_format($row['category_amount'], 2)) ?></p>
-                    </div>
-                </div>
-            <?php endforeach; ?>
-        </div>
-    </div>
-    
-    <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#make-expense-modal">+</button>
+        <nav>
+            <ul class="pagination justify-content-center">
+                <li class="page-item <?= $currentPage <= 1 ? 'disabled' : '' ?>">
+                <a class="page-link" href="?page=<?= $currentPage - 1 ?>">Previous</a>
+                </li>
 
-    <div class="container">
+                <?php for ($i = 1; $i <= $totalPages; $i++): ?>
+                <li class="page-item <?= $i == $currentPage ? 'active' : '' ?>">
+                    <a class="page-link" href="?page=<?= $i ?>"><?= $i ?></a>
+                </li>
+                <?php endfor; ?>
+
+                <li class="page-item <?= $currentPage >= $totalPages ? 'disabled' : '' ?>">
+                <a class="page-link" href="?page=<?= $currentPage + 1 ?>">Next</a>
+                </li>
+            </ul>
+            </nav>
+    </div>
+
+    <div class="container border rounded py-4 px-3 px-md-4 mt-4">
         <div class="row align-items-center">
-            <div class="col-md-7">
+            <div class="col-md-7 mb-5 mb-md-0">
                 <div style="position: relative; height: 250px;">
                     <canvas id="barGraph"></canvas>
                 </div>
@@ -134,13 +195,16 @@
                     ticks: {
                         color: isDarkMode ? '#fff' : '#000',
                         precision: 0,
-                        stepSize: 200,
+                        stepSize: 20,
                         callback: function(value) {
                             return `₱${value.toLocaleString()}`;
                         }
                     },
                     grid: {
-                        color: isDarkMode ? '#fff' : '#ccc'
+                        color: isDarkMode ? '#6c757d' : '#dee2e6',
+                    },
+                    border: {
+                        display: false
                     }
                 }
             }
@@ -160,6 +224,7 @@
                 backgroundColor: ['#F1BA88', '#A6D6D6'],
                 borderWidth: 7,
                 borderColor: isDarkMode ? '#212529' : '#fff',
+                hoverBorderColor: isDarkMode ? '#212529' : '#fff',
                 borderRadius: 10
             }]
         },
@@ -192,7 +257,6 @@
         }
     });
 </script>
-
 
 <div class="modal fade" id="add-balance-modal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
@@ -257,8 +321,7 @@
                             <div class="col-4">
                                 <label class="w-100">
                                     <input type="radio" name="category_id" value="<?= $row['category_id'] ?>" <?= strtolower($row['category_name']) === 'food' ? 'checked' : '' ?> hidden>
-                                    <div class="category-option py-3 rounded text-center"
-                                        style="background-color: <?= htmlspecialchars($row['category_color']) ?>;">
+                                    <div class="category-option p-2 rounded text-center" style="border: 3px solid <?= htmlspecialchars($row['category_color']) ?>; color: <?= htmlspecialchars($row['category_color']) ?>;">
                                         <p class="m-0"><?= htmlspecialchars($row['category_name']) ?></p>
                                     </div>
                                 </label>
@@ -274,6 +337,26 @@
     </div>
 </div>
 
+<div class="modal fade" id="filter-modal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <form novalidate action="actions/dashboard/make_expense_action.php" method="post">
+                <div class="modal-header">
+                    <h5 class="modal-title">Enter Details</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary">Add</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script src="assets/js/toggle-edit.js"></script>
 <script src="assets/js/number-input.js"></script>
 <script>
     const forms = document.querySelectorAll("form");

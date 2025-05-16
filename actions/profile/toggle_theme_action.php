@@ -13,6 +13,6 @@ $stmt->bind_param("si", $newTheme, $userId);
 $stmt->execute();
 $stmt->close();
 
-header("Location: ../../settings.php");
+header("Location: ../../profile.php");
 exit();
 ?>

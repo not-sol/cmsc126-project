@@ -3,34 +3,37 @@
     include "includes/connect_db.php"
 ?>
 <!DOCTYPE html>
-<html lang="en" data-bs-theme="<?= (isset($_SESSION['theme']) && $_SESSION['theme'] === 'dark') ? 'dark' : 'light' ?>">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Login - UP Tracker</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-SgOJa3DmI69IUzQ2PVdRZhwQ+dy64/BUtbMJw1MZ8t5HZApcHrRKUc4W0kG879m7" crossorigin="anonymous">
 </head>
-<body>
-    <div class="container">
-        <h3>Sign In</h3>
-        <form novalidate action="<?php htmlspecialchars("PHP_SELF")?>" method="post">
+<body class="d-flex align-items-center justify-content-center min-vh-100 bg-body">
+    <div class="card px-4 py-5" style="width: 100%; max-width: 450px;">
+        <h2 class="text-center mb-4">Login to UP Tracker</h2>
+        <form novalidate action="actions/account/login_action.php" method="post">
             <div class="form-floating my-3">
                 <input type="email" class="form-control" id="password-input" placeholder="Email" name="email" required>
                 <label for="password-input" class="form-label">Email</label>
-                <div class="invalid-feedback" id="email-feedback">Please fill out this field.</div>
             </div>
             <div class="form-floating my-3">
                 <input type="password" class="form-control" id="password-input" placeholder="Enter password" name="password" required>
                 <label for="password-input" class="form-label">Password</label>
-                <div class="invalid-feedback" id="password-feedback ">Please fill out this field.</div>
             </div>
-            <button type="submit" class="btn btn-dark">Submit</button>
+            <button type="submit" name="login" class="btn btn-primary w-100">Login</button>   
         </form>
-        <a href="sign_up.php">Sign Up</a>
+        <p class="text-center mt-3">Don't have an account? <a href="sign_up.php">Sign Up</a></p>
+        <?php if (isset($_SESSION['alert'])): ?>
+        <div class="alert alert-<?= $_SESSION['alert']['type'] ?> alert-dismissible fade show" role="alert">
+            <?= htmlspecialchars($_SESSION['alert']['message']) ?>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        <?php unset($_SESSION['alert']); ?>
+        <?php endif; ?>
     </div>
     <script src="assets/js/validate-form.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
-<?php
-    include "actions/account/login_action.php"
-?>
