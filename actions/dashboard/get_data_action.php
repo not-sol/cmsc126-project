@@ -45,13 +45,19 @@ $totalPages = ceil($totalRows / $maxRows);
 
 $offset = ($currentPage - 1) * $maxRows;
 
-$transactionData = $conn->query("
-    SELECT * FROM transactions
-    JOIN categories ON transactions.category_id = categories.category_id
+$sql = "
+    SELECT t.*, c.category_name 
+    FROM Transactions t 
+    JOIN Categories c ON t.category_id = c.category_id 
+    WHERE c.user_id = ?
     ORDER BY $orderClause
-    LIMIT $maxRows OFFSET $offset
-");
+    LIMIT ? OFFSET ?
+";
 
+$stmt = $conn->prepare($sql);
+$stmt->bind_param("iii", $user_id, $maxRows, $offset);
+$stmt->execute();
+$transactionData = $stmt->get_result();
 
 $stmt2 = $conn->prepare("
     SELECT category_id, category_color, category_name, category_amount 
