@@ -2,7 +2,6 @@
 session_start();
 include '../../includes/connect_db.php';
 
-// examples
 $categories = [
     ['Income', '#1F7D53', 0],
     ['Food', '#F0A04B', 0],

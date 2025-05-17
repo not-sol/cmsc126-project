@@ -42,7 +42,6 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $deleteUser->execute();
     $deleteUser->close();
 
-    // Logout and redirect
     session_unset();
     session_destroy();
     header("Location: ../../index.php");

@@ -104,23 +104,23 @@
     
     <h1 class="mt-5 mb-4">Preferences</h1>
     
-    <form method="post" action="" class="mb-4">
+    <form method="post" action="actions/profile/max_rows_action.php" class="mb-4">
         <div class="dropdown mb-3 dropend">
             <button type="button" class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown">
                 Max Rows: <?= $maxRows ?>
             </button>
             <ul class="dropdown-menu">
                 <?php foreach ([10, 25, 50, 100] as $opt): ?>
-                <li>
-                    <a class="dropdown-item <?= $opt == $maxRows ? 'active' : '' ?>" href="?max_rows=<?= $opt ?>">
-                    <?= $opt ?>
-                    </a>
-                </li>
+                    <li>
+                        <button type="submit" name="max_rows" value="<?= $opt ?>" 
+                                class="dropdown-item <?= $opt == $maxRows ? 'active' : '' ?>">
+                            <?= $opt ?>
+                        </button>
+                    </li>
                 <?php endforeach; ?>
             </ul>
         </div>
     </form>
-
 
     <form id="darkmode-form" action="actions/profile/toggle_theme_action.php" method="post">
         <div class="form-check form-switch">
@@ -205,7 +205,7 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="submit" class="btn btn-danger" onsubmit="return confirm('Are you sure you want to delete your account? This cannot be undone.');">Delete</button>
+                    <button type="submit" class="btn btn-danger">Delete</button>
                 </div>
             </form>
         </div>
